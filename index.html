@@ -1,42 +1,33 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>FlashSecours GDO</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/782/782761.png">
-</head>
-<body>
-    <div class="app-container">
-        <h1>🚒 FlashSecours</h1>
-        
-        <div class="filter-container">
-            <select id="category-select" onchange="changeCategory()">
-                <option value="Tous">Tous les modules</option>
-                <option value="Bilan">Bilans</option>
-                <option value="Urgences">Urgences Vitales</option>
-                <option value="Constantes">Constantes</option>
-            </select>
-        </div>
+<div class="app-container">
+    <h1>🚒 Questions flashs</h1>
+    
+    <div class="filter-container">
+        <select id="category-select" onchange="changeCategory()">
+            <option value="Tous">Tous les modules</option>
+            <option value="Bilan">Bilans</option>
+            <option value="Urgences">Urgences Vitales</option>
+            <option value="Constantes">Constantes</option>
+        </select>
+    </div>
 
-        <div class="card" id="card" onclick="flipCard()">
-            <div class="card-inner">
-                <div class="card-front">
-                    <p id="question">Chargement du Drive...</p>
-                </div>
-                <div class="card-back">
-                    <p id="answer">...</p>
-                </div>
+    <div class="card" id="card" onclick="flipCard()">
+        <div class="card-inner">
+            <div class="card-front">
+                <p id="question">Chargement...</p>
+            </div>
+            <div class="card-back">
+                <p id="answer">...</p>
             </div>
         </div>
-
-        <div class="controls">
-            <button class="btn red" onclick="nextCard()">Suivant</button>
-            <button class="btn green" onclick="location.reload()">Actualiser Sheet</button>
-        </div>
     </div>
-    <script src="script.js"></script>
-</body>
-</html>
+
+    <div class="controls" id="controls">
+        <button class="btn red" onclick="handleAnswer(false)">❌ À revoir</button>
+        <button class="btn green" onclick="handleAnswer(true)">✅ Maîtrisé</button>
+    </div>
+    
+    <div id="finished-state" style="display:none;">
+        <h3>Session terminée ! 🎉</h3>
+        <button class="btn green" onclick="resetSession()">Recommencer</button>
+    </div>
+</div>
