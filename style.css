@@ -1,0 +1,25 @@
+body {
+    font-family: -apple-system, system-ui, sans-serif;
+    background-color: #f2f2f7;
+    display: flex; justify-content: center; align-items: center;
+    height: 100vh; margin: 0;
+}
+.app-container { width: 90%; max-width: 400px; text-align: center; }
+select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ccc; margin-bottom: 20px; font-size: 1rem; }
+.card { perspective: 1000px; height: 300px; margin-bottom: 30px; }
+.card-inner {
+    position: relative; width: 100%; height: 100%;
+    transition: transform 0.6s; transform-style: preserve-3d;
+}
+.card.flipped .card-inner { transform: rotateY(180deg); }
+.card-front, .card-back {
+    position: absolute; width: 100%; height: 100%;
+    backface-visibility: hidden; display: flex; justify-content: center;
+    align-items: center; padding: 20px; border-radius: 20px;
+    background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    font-size: 1.3rem; font-weight: bold; box-sizing: border-box;
+}
+.card-back { transform: rotateY(180deg); background-color: #e8f5e9; color: #2e7d32; }
+.btn { border: none; padding: 15px 25px; border-radius: 12px; color: white; font-weight: bold; cursor: pointer; }
+.red { background-color: #ff3b30; }
+.green { background-color: #34c759; }
