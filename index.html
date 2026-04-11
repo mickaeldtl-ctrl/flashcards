@@ -1,33 +1,49 @@
-<div class="app-container">
-    <h1>🚒 Questions flashs</h1>
-    
-    <div class="filter-container">
-        <select id="category-select" onchange="changeCategory()">
-            <option value="Tous">Tous les modules</option>
-            <option value="Bilan">Bilans</option>
-            <option value="Urgences">Urgences Vitales</option>
-            <option value="Constantes">Constantes</option>
-        </select>
-    </div>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>FlashSecours</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>🚒 FlashSecours</h1>
+            <select id="category-select" onchange="changeCategory()">
+                <option value="Tous">Tous les modules</option>
+                <option value="Bilan">Bilans</option>
+                <option value="Urgences">Urgences Vitales</option>
+                <option value="Constantes">Constantes</option>
+            </select>
+        </header>
 
-    <div class="card" id="card" onclick="flipCard()">
-        <div class="card-inner">
-            <div class="card-front">
-                <p id="question">Chargement...</p>
+        <main>
+            <div class="card" id="card" onclick="flipCard()">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <p id="question">Chargement des fiches...</p>
+                    </div>
+                    <div class="card-back">
+                        <p id="answer">...</p>
+                    </div>
+                </div>
             </div>
-            <div class="card-back">
-                <p id="answer">...</p>
-            </div>
-        </div>
-    </div>
 
-    <div class="controls" id="controls">
-        <button class="btn red" onclick="handleAnswer(false)">❌ À revoir</button>
-        <button class="btn green" onclick="handleAnswer(true)">✅ Maîtrisé</button>
+            <div id="finished-state" class="hidden">
+                <div class="success-icon">🎉</div>
+                <h2>Session terminée !</h2>
+                <p>Toutes les cartes sont maîtrisées.</p>
+                <button class="btn restart" onclick="resetSession()">Recommencer</button>
+            </div>
+        </main>
+
+        <footer id="controls">
+            <button class="btn red" onclick="handleAnswer(false)">❌ À REVOIR</button>
+            <button class="btn green" onclick="handleAnswer(true)">✅ MAÎTRISÉ</button>
+        </footer>
     </div>
-    
-    <div id="finished-state" style="display:none;">
-        <h3>Session terminée ! 🎉</h3>
-        <button class="btn green" onclick="resetSession()">Recommencer</button>
-    </div>
-</div>
+    <script src="script.js"></script>
+</body>
+</html>
