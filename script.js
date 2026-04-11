@@ -1,67 +1,69 @@
 
-loadData();
+// REMPLACE BIEN PAR TON LIEN CSV GOOGLE DRIVE
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSC6cn5zv2nYLr6z69JGF0nQ1Rg-vhB9XsZDWXM17ZfkQMCWmqEmse4UNk9TbRTFQRAG-lKDbXtUb1r/pub?output=csv"; 
 
-let fullDeck = [];      // Toutes les cartes du Sheet
-let sessionDeck = [];   // Les cartes qu'il reste à apprendre maintenant
+
+let fullDeck = [];
+let sessionDeck = [];
 let currentIndex = 0;
 
 async function loadData() {
     try {
         const response = await fetch(SHEET_URL);
+        if (!response.ok) throw new Error();
         const csvText = await response.text();
         fullDeck = parseCSV(csvText);
-        resetSession(); // On commence une session avec toutes les cartes
+        if (fullDeck.length === 0) throw new Error();
+        resetSession();
     } catch (e) {
-        document.getElementById('question').innerText = "Erreur de chargement.";
+        document.getElementById('question').innerText = "⚠️ Erreur de lien Sheet. Vérifie que tu as bien publié en .csv";
     }
 }
 
 function parseCSV(text) {
-    const lines = text.split('\n').filter(l => l.trim() !== "");
+    const lines = text.split('\n').filter(l => l.trim().length > 5);
     return lines.slice(1).map(line => {
-        const matches = line.match(/(".*?"|[^,]+)/g);
-        if (matches) {
+        const parts = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+        if (parts.length >= 2) {
             return {
-                q: matches[0].replace(/"/g, ''),
-                a: matches[1].replace(/"/g, ''),
-                cat: matches[2] ? matches[2].replace(/"/g, '').trim() : "Général"
+                q: parts[0].replace(/"/g, '').trim(),
+                a: parts[1].replace(/"/g, '').trim(),
+                cat: parts[2] ? parts[2].replace(/"/g, '').trim() : "Général"
             };
         }
-    }).filter(card => card !== undefined);
+    }).filter(x => x);
 }
 
 function showCard() {
+    const cardEl = document.getElementById('card');
+    const controlsEl = document.getElementById('controls');
+    const finishEl = document.getElementById('finished-state');
+
     if (sessionDeck.length === 0) {
-        document.getElementById('card').style.display = "none";
-        document.getElementById('controls').style.display = "none";
-        document.getElementById('finished-state').style.display = "block";
+        cardEl.classList.add('hidden');
+        controlsEl.classList.add('hidden');
+        finishEl.classList.remove('hidden');
         return;
     }
-    document.getElementById('card').style.display = "block";
-    document.getElementById('controls').style.display = "flex";
-    document.getElementById('finished-state').style.display = "none";
-    
+
+    cardEl.classList.remove('hidden', 'flipped');
+    controlsEl.classList.remove('hidden');
+    finishEl.classList.add('hidden');
+
     document.getElementById('question').innerText = sessionDeck[currentIndex].q;
     document.getElementById('answer').innerText = sessionDeck[currentIndex].a;
-    document.getElementById('card').classList.remove('flipped');
 }
 
 function handleAnswer(isKnown) {
     if (isKnown) {
-        // Enlever la carte du deck de session (elle est sue)
         sessionDeck.splice(currentIndex, 1);
-    } else {
-        // Laisser la carte et passer à une autre (elle reviendra)
-        currentIndex = (currentIndex + 1) % sessionDeck.length;
     }
     
-    // Si on a encore des cartes, on en choisit une au hasard
     if (sessionDeck.length > 0) {
         currentIndex = Math.floor(Math.random() * sessionDeck.length);
         showCard();
     } else {
-        showCard(); // Affichera l'écran de fin
+        showCard();
     }
 }
 
@@ -72,12 +74,7 @@ function resetSession() {
     showCard();
 }
 
-function changeCategory() {
-    resetSession();
-}
-
-function flipCard() { 
-    document.getElementById('card').classList.toggle('flipped'); 
-}
+function changeCategory() { resetSession(); }
+function flipCard() { document.getElementById('card').classList.toggle('flipped'); }
 
 loadData();
