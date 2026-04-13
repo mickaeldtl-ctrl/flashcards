@@ -9,15 +9,23 @@
 </head>
 <body>
     <div class="app-container">
-        <header>
-            <h1>🚒 FlashSecours</h1>
-            <select id="category-select" onchange="changeCategory()">
-                <option value="Tous">Tous les modules</option>
-                <option value="Bilan">Bilans</option>
-                <option value="Urgences">Urgences Vitales</option>
-                <option value="Constantes">Constantes</option>
-            </select>
-        </header>
+ <header>
+    <h1>🚒 FlashSecours</h1>
+    <select id="category-select" onchange="changeCategory()">
+        <option value="Tous">Tous les modules</option>
+        
+        <option value="Bilan">Bilans</option>
+        <option value="Urgences">Urgences Vitales</option>
+        <option value="Constantes">Constantes</option>
+        <option value="Procédures">Procédures</option>
+        
+        <option value="DT">Douleur Thoracique (DT)</option>
+        <option value="AVC">AVC</option>
+        <option value="ACCOUCHEMENT">Accouchement</option>
+        <option value="ALLERGIE">Allergie / Anaphylaxie</option>
+        <option value="ASTHME">Asthme / Détresse Respi</option>
+    </select>
+</header>
 
         <main>
             <div class="card" id="card" onclick="flipCard()">
