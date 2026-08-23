@@ -9,20 +9,12 @@
 </head>
 <body>
     <div class="app-container">
- <header>
-    <h1>🚒 FlashSecours</h1>
-   <select id="category-select" onchange="changeCategory()">
-    <option value="Tous">Tous les modules</option>
-    <option value="BILAN">Bilans</option>
-    <option value="URGENCES">Urgences Vitales</option>
-    <option value="CONSTANTES">Constantes</option>
-    <option value="DT">Douleur Thoracique</option>
-    <option value="AVC">AVC</option>
-    <option value="ACCOUCHEMENT">Accouchement</option>
-    <option value="ALLERGIE">Allergie</option>
-    <option value="ASTHME">Asthme</option>
-</select>
-</header>
+        <header>
+            <h1>🚒 FlashSecours</h1>
+            <select id="category-select" onchange="changeCategory()">
+                <option value="TOUS">Toutes les catégories</option>
+            </select>
+        </header>
 
         <main>
             <div class="card" id="card" onclick="flipCard()">
@@ -39,7 +31,7 @@
             <div id="finished-state" class="hidden">
                 <div class="success-icon">🎉</div>
                 <h2>Session terminée !</h2>
-                <p>Toutes les cartes sont maîtrisées.</p>
+                <p>Toutes les cartes choisies sont maîtrisées.</p>
                 <button class="btn restart" onclick="resetSession()">Recommencer</button>
             </div>
         </main>
