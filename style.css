@@ -14,9 +14,10 @@ body {
     margin: 0;
     display: flex;
     justify-content: center;
-    height: 100dvh; /* Utilise dynamic viewport height pour mobile */
+    height: 100dvh;
     color: var(--text);
     overflow: hidden;
+    touch-action: pan-y; /* Permet le défilement vertical tout en isolant le swipe horizontal */
 }
 
 .app-container {
@@ -59,10 +60,13 @@ main {
 
 .card { 
     width: 100%; 
-    height: 70vh; /* S'adapte à l'écran mobile */
+    height: 70vh;
     max-height: 450px;
     perspective: 1000px; 
     cursor: pointer; 
+    user-select: none;
+    touch-action: none;
+    will-change: transform;
 }
 
 .card-inner {
@@ -81,6 +85,7 @@ main {
     font-size: 1.35rem; font-weight: 700; line-height: 1.4;
     box-shadow: var(--shadow);
     background: var(--card-bg);
+    transition: border-color 0.2s, background-color 0.2s;
 }
 
 .card-back { 
@@ -88,6 +93,17 @@ main {
     color: var(--success); 
     background: #f0fff4;
     border: 4px solid var(--success);
+}
+
+/* Feedback visuel au swipe */
+.card.swiping-right .card-front {
+    border: 4px solid var(--success);
+    background-color: #f0fff4;
+}
+
+.card.swiping-left .card-front {
+    border: 4px solid var(--danger);
+    background-color: #fff5f5;
 }
 
 footer { 
@@ -121,7 +137,6 @@ footer {
 
 .success-icon { font-size: 5rem; margin-bottom: 15px; }
 
-/* Responsive adjustments */
 @media (max-height: 600px) {
     .card { height: 300px; }
     header h1 { font-size: 1.2rem; }
