@@ -17,12 +17,10 @@ async function loadData() {
     }
 }
 
-// Parser CSV conforme (gestion propre des virgules, guillemets et sauts de ligne)
 function parseCSV(text) {
     const lines = text.split(/\r?\n/).filter(line => line.trim().length > 0);
     if (lines.length <= 1) return [];
 
-    // Détection du séparateur principal (, ou ;)
     const header = lines[0];
     const separator = header.includes(';') ? ';' : ',';
 
@@ -57,14 +55,13 @@ function parseCSV(text) {
                 q: parts[0],
                 a: parts[1],
                 cat: parts[2] ? parts[2].trim().toUpperCase() : "GENERAL",
-                weight: 2 // Poids initial : 2 réussites nécessaires pour valider la carte
+                weight: 2
             };
         }
         return null;
     }).filter(x => x !== null);
 }
 
-// Remplit automatiquement le <select> avec les catégories trouvées dans le Sheet
 function updateCategorySelect() {
     const select = document.getElementById('category-select');
     const categories = Array.from(new Set(fullDeck.map(c => c.cat))).sort();
@@ -81,7 +78,6 @@ function updateCategorySelect() {
 function resetSession() {
     const selectedValue = document.getElementById('category-select').value.toUpperCase();
     
-    // Réinitialisation du poids pour la nouvelle session
     const source = selectedValue === "TOUS" 
         ? fullDeck 
         : fullDeck.filter(c => c.cat === selectedValue);
@@ -97,7 +93,6 @@ function resetSession() {
     pickNextCard();
 }
 
-// Tire une carte de façon pondérée (plus le poids est grand, plus la probabilité est forte)
 function pickNextCard() {
     const activeCards = sessionDeck.filter(c => c.weight > 0);
 
@@ -132,7 +127,10 @@ function showCard(card) {
         return;
     }
 
-    cardEl.classList.remove('hidden', 'flipped');
+    // Réinitialiser les transformations et styles de swipe
+    cardEl.style.transform = '';
+    cardEl.style.transition = '';
+    cardEl.classList.remove('hidden', 'flipped', 'swiping-left', 'swiping-right');
     controlsEl.classList.remove('hidden');
     finishEl.classList.add('hidden');
 
@@ -144,10 +142,8 @@ function handleAnswer(isKnown) {
     if (!currentCard) return;
 
     if (isKnown) {
-        // Reduit la fréquence d'apparition (poids diminue)
         currentCard.weight -= 1;
     } else {
-        // Augmente la fréquence d'apparition (revient plus souvent)
         currentCard.weight += 2;
     }
 
@@ -155,6 +151,85 @@ function handleAnswer(isKnown) {
 }
 
 function changeCategory() { resetSession(); }
-function flipCard() { document.getElementById('card').classList.toggle('flipped'); }
+
+// Retournement de carte (évite de retourner si un swipe a eu lieu)
+let isSwiping = false;
+function flipCard() {
+    if (isSwiping) return;
+    document.getElementById('card').classList.toggle('flipped');
+}
+
+/* ==========================================
+   GESTION DU SWIPE TACTILE
+   ========================================== */
+const card = document.getElementById('card');
+let startX = 0;
+let currentX = 0;
+let isDragging = false;
+
+card.addEventListener('touchstart', (e) => {
+    startX = e.touches[0].clientX;
+    isDragging = true;
+    isSwiping = false;
+    card.style.transition = 'none';
+}, { passive: true });
+
+card.addEventListener('touchmove', (e) => {
+    if (!isDragging) return;
+    currentX = e.touches[0].clientX;
+    const diffX = currentX - startX;
+
+    // Si le déplacement est significatif, on bloque le flip au clic
+    if (Math.abs(diffX) > 10) {
+        isSwiping = true;
+    }
+
+    const rotate = diffX * 0.08; // légère rotation
+    card.style.transform = `translateX(${diffX}px) rotate(${rotate}deg)`;
+
+    if (diffX > 40) {
+        card.classList.add('swiping-right');
+        card.classList.remove('swiping-left');
+    } else if (diffX < -40) {
+        card.classList.add('swiping-left');
+        card.classList.remove('swiping-right');
+    } else {
+        card.classList.remove('swiping-left', 'swiping-right');
+    }
+}, { passive: true });
+
+card.addEventListener('touchend', (e) => {
+    if (!isDragging) return;
+    isDragging = false;
+    const diffX = currentX - startX;
+    const threshold = 80; // Seuil de validation du swipe
+
+    card.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+
+    if (diffX > threshold) {
+        // Swipe à droite -> MAÎTRISÉ
+        card.style.transform = `translateX(500px) rotate(30deg)`;
+        card.style.opacity = '0';
+        setTimeout(() => {
+            handleAnswer(true);
+            card.style.opacity = '1';
+        }, 250);
+    } else if (diffX < -threshold) {
+        // Swipe à gauche -> À REVOIR
+        card.style.transform = `translateX(-500px) rotate(-30deg)`;
+        card.style.opacity = '0';
+        setTimeout(() => {
+            handleAnswer(false);
+            card.style.opacity = '1';
+        }, 250);
+    } else {
+        // Retour au centre si le swipe est annulé
+        card.style.transform = '';
+        card.classList.remove('swiping-left', 'swiping-right');
+    }
+
+    startX = 0;
+    currentX = 0;
+});
 
 loadData();
